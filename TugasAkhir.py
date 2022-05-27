@@ -15,7 +15,7 @@ class JayaAbadi(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        for F in (FirstPage, PageTwo, PageThree):
+        for F in (FrontPage, FirstPage, PageTwo, PageThree):
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
@@ -23,12 +23,55 @@ class JayaAbadi(tk.Tk):
 
             frame.grid(row=0, column=0, sticky="nsew")
 
-        self.show_frame("FirstPage")
+        self.show_frame("FrontPage")
 
     def show_frame(self, page_name):
 
         frame = self.frames[page_name]
         frame.tkraise()
+
+
+class FrontPage(tk.Frame):
+
+    def __init__(self, parent, controller):
+
+        def Confirm():
+
+            if re.search("[Nn]", entry_RB.get()):
+                    valid = True
+                    buttonToFirstPage.invoke()
+            else:
+                    messagebox.showinfo("Error", "Harus Jawab Bukan")
+
+
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+
+
+        global entry_RB
+
+
+        frameHeading = tk.Frame(self)
+        frameHeading.grid(row=0, columnspan=3)
+        heading = tk.Label(frameHeading, fg="blue", bg="beige", height="10",width="22")
+        heading.config(font=("", 30))
+        heading.grid(row=5, columnspan=2)
+        self.img = PhotoImage(file=r"C:\Users\evand\Pictures\kapal.gif")
+        self.image = Label(self, image=self.img)
+        self.image.place(height="500", width="510")
+
+        label_RB = tk.Label(self, text="Apakah Kamu Robot :", font=("arial", 15), fg="black")
+        label_RB.grid(row=1, column=0)
+        entry_RB = tk.Entry(self, font=("", 15))
+        entry_RB.grid(row=1, column=1)
+        entry_RB.focus_force()
+
+
+        Button_Confirm = tk.Button(self, text="Confirm", width="8", height="1", font=("", 15), command=Confirm)
+        Button_Confirm.grid(row=13, column=1, pady=6, padx=15, sticky='E')
+
+        buttonToFirstPage = tk.Button(self, text="", command=lambda: controller.show_frame("FirstPage"))
+
 
 
 class FirstPage(tk.Frame):
@@ -99,6 +142,8 @@ class FirstPage(tk.Frame):
         global ship_Number
 
 
+
+
         frameHeading = tk.Frame(self)
         frameHeading.grid(row=0, columnspan=3)
         heading = tk.Label(frameHeading, text="Kapal Jaya Abadi", fg="blue", bg="beige", height="2",width="22")
@@ -148,7 +193,7 @@ class FirstPage(tk.Frame):
         txtdisplay1.grid(row=7, column=0, columnspan=3)
         txtdisplay1.configure(state='disabled')
 
-        Button_next = tk.Button(self, text="Next", width="7", height="1", font=("", 15),command=Validation)
+        Button_next = tk.Button(self, text="Next", width="7", height="1", font=("", 15), command=Validation)
         Button_next.grid(row=8, column=1, pady=10, sticky='E')
 
         Page_One = tk.Label(self, text="Page 1", font=("", 10)).grid(row=9, column=1,sticky='E')
@@ -184,9 +229,9 @@ class PageTwo(tk.Frame):
                     txtdisplay2.insert(tk.END,"\nHarga Penumpang Anak-anak: Rp 165.000 *Termasuk Asuransi")
                     txtdisplay2.insert(tk.END,"\nHarga Penumpang Bayi: Tidak dikenakan biaya")
                 elif int(penumpangvar.get()) > (int(Dewasavar.get()) + int(Anakvar.get()) + int(Bayivar.get())):
-                    messagebox.showinfo("Error", " \n")
+                    messagebox.showinfo("Error", " \nPenumpang Terlalu Banyak")
                 else:
-                    messagebox.showinfo("Error"," \n")
+                    messagebox.showinfo("Error"," \nPenumpang Terlalu Banyak")
 
             txtdisplay2.configure(state='disabled')
 
@@ -205,6 +250,7 @@ class PageTwo(tk.Frame):
                     messagebox.showinfo("Error","Sesuaikan Dengan Jumlah Penumpang. \n")
 
         def clear2():
+            Dewasavar.get() == 0
             txtdisplay2.configure(state='normal')
             txtdisplay2.delete('1.0', tk.END)
             txtdisplay2.configure(state='disabled')
@@ -305,7 +351,6 @@ class PageThree(tk.Frame):
             txtdisplay3.configure(
                 state='disabled')
 
-
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
@@ -323,10 +368,13 @@ class PageThree(tk.Frame):
 
 
         Page_Three = tk.Label(self, text="Page 3", font=("", 10), padx=20).grid(row=7, column=1,sticky='E')
+        self.button = Button(self, text="Back To First Page", command=self.destroy ,width="20", height="2", font=("", 15))
+        self.button.place(x=265, y=585)
+
 
 
 if __name__ == "__main__":
     root = JayaAbadi()
-    root.geometry("512x750")
+    root.geometry("512x700")
     root.title("Reservasi Kapal Jaya Abadi")
     root.mainloop()
